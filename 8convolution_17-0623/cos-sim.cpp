@@ -9,7 +9,7 @@
 #include<stdio.h>
 #include <windows.h>
 
-
+int cos_eco_mode_flag = 1;
 
 //メモリ確保を行うためのヘッダ
 #define ANSI				
@@ -552,32 +552,59 @@ int cossim(char date_directory[],int &image_x,int &image_y,int paramerter[],int 
 ////////////////////////////計算条件//////////////////////////////////////////////////////////////////////////////////////////////
 			printf("cos類似度の計算を始めます\n");
 			for(i=0;i<image_y;++i){	
-				for(j=0;j<image_x;++j){	
-				
-		//cout<<"処理中"<<endl;
-		//if(minor_flag==0){
-			
-			//ここで正負の2つの閾値を取れるように改修する
-			if(threshold_low_flag[j][i]==1){threshold_low=V0[j][i];fprintf(fp_threshold,"%lf,",threshold_low);}
-			if(threshold_low_flag[j][i]==2){threshold_low=V45[j][i];fprintf(fp_threshold,"%lf,",threshold_low);}
-			if(threshold_low_flag[j][i]==3){threshold_low=V90[j][i];fprintf(fp_threshold,"%lf,",threshold_low);}
-			if(threshold_low_flag[j][i]==4){threshold_low=V135[j][i];fprintf(fp_threshold,"%lf,",threshold_low);}
-			if(threshold_low_flag[j][i]==5){threshold_low=V180[j][i];fprintf(fp_threshold,"%lf,",threshold_low);}
-			if(threshold_low_flag[j][i]==6){threshold_low=V225[j][i];fprintf(fp_threshold,"%lf,",threshold_low);}
-			if(threshold_low_flag[j][i]==7){threshold_low=V270[j][i];fprintf(fp_threshold,"%lf,",threshold_low);}
-			if(threshold_low_flag[j][i]==8){threshold_low=V315[j][i];fprintf(fp_threshold,"%lf,",threshold_low);}
-			
-			if(j==image_x-1){fprintf(fp_threshold,"\n");}
+				for (j = 0; j < image_x; ++j) {
 
-			if(threshold_high_flag[j][i]==1){threshold_high=V0[j][i];fprintf(fp_threshold_high,"%lf,",threshold_high);}
-			if(threshold_high_flag[j][i]==2){threshold_high=V45[j][i];fprintf(fp_threshold_high,"%lf,",threshold_high);}
-			if(threshold_high_flag[j][i]==3){threshold_high=V90[j][i];fprintf(fp_threshold_high,"%lf,",threshold_high);}
-			if(threshold_high_flag[j][i]==4){threshold_high=V135[j][i];fprintf(fp_threshold_high,"%lf,",threshold_high);}
-			if(threshold_high_flag[j][i]==5){threshold_high=V180[j][i];fprintf(fp_threshold_high,"%lf,",threshold_high);}
-			if(threshold_high_flag[j][i]==6){threshold_high=V225[j][i];fprintf(fp_threshold_high,"%lf,",threshold_high);}
-			if(threshold_high_flag[j][i]==7){threshold_high=V270[j][i];fprintf(fp_threshold_high,"%lf,",threshold_high);}
-			if(threshold_high_flag[j][i]==8){threshold_high=V315[j][i];fprintf(fp_threshold_high,"%lf,",threshold_high);}
-			if(j==image_x-1){fprintf(fp_threshold_high,"\n");}
+					//cout<<"処理中"<<endl;
+					//if(minor_flag==0){
+					if (cos_eco_mode_flag != 1) {
+
+					//ここで正負の2つの閾値を取れるように改修する
+					if (threshold_low_flag[j][i] == 1) { threshold_low = V0[j][i]; fprintf(fp_threshold, "%lf,", threshold_low); }
+					if (threshold_low_flag[j][i] == 2) { threshold_low = V45[j][i]; fprintf(fp_threshold, "%lf,", threshold_low); }
+					if (threshold_low_flag[j][i] == 3) { threshold_low = V90[j][i]; fprintf(fp_threshold, "%lf,", threshold_low); }
+					if (threshold_low_flag[j][i] == 4) { threshold_low = V135[j][i]; fprintf(fp_threshold, "%lf,", threshold_low); }
+					if (threshold_low_flag[j][i] == 5) { threshold_low = V180[j][i]; fprintf(fp_threshold, "%lf,", threshold_low); }
+					if (threshold_low_flag[j][i] == 6) { threshold_low = V225[j][i]; fprintf(fp_threshold, "%lf,", threshold_low); }
+					if (threshold_low_flag[j][i] == 7) { threshold_low = V270[j][i]; fprintf(fp_threshold, "%lf,", threshold_low); }
+					if (threshold_low_flag[j][i] == 8) { threshold_low = V315[j][i]; fprintf(fp_threshold, "%lf,", threshold_low); }
+
+					if (j == image_x - 1) { fprintf(fp_threshold, "\n"); }
+
+					if (threshold_high_flag[j][i] == 1) { threshold_high = V0[j][i]; fprintf(fp_threshold_high, "%lf,", threshold_high); }
+					if (threshold_high_flag[j][i] == 2) { threshold_high = V45[j][i]; fprintf(fp_threshold_high, "%lf,", threshold_high); }
+					if (threshold_high_flag[j][i] == 3) { threshold_high = V90[j][i]; fprintf(fp_threshold_high, "%lf,", threshold_high); }
+					if (threshold_high_flag[j][i] == 4) { threshold_high = V135[j][i]; fprintf(fp_threshold_high, "%lf,", threshold_high); }
+					if (threshold_high_flag[j][i] == 5) { threshold_high = V180[j][i]; fprintf(fp_threshold_high, "%lf,", threshold_high); }
+					if (threshold_high_flag[j][i] == 6) { threshold_high = V225[j][i]; fprintf(fp_threshold_high, "%lf,", threshold_high); }
+					if (threshold_high_flag[j][i] == 7) { threshold_high = V270[j][i]; fprintf(fp_threshold_high, "%lf,", threshold_high); }
+					if (threshold_high_flag[j][i] == 8) { threshold_high = V315[j][i]; fprintf(fp_threshold_high, "%lf,", threshold_high); }
+					if (j == image_x - 1) { fprintf(fp_threshold_high, "\n"); }
+					}
+					else {
+						//ここで正負の2つの閾値を取れるように改修する
+						if (threshold_low_flag[j][i] == 1) { threshold_low = V0[j][i];}
+						if (threshold_low_flag[j][i] == 2) { threshold_low = V45[j][i];}
+						if (threshold_low_flag[j][i] == 3) { threshold_low = V90[j][i];}
+						if (threshold_low_flag[j][i] == 4) { threshold_low = V135[j][i];}
+						if (threshold_low_flag[j][i] == 5) { threshold_low = V180[j][i];}
+						if (threshold_low_flag[j][i] == 6) { threshold_low = V225[j][i];}
+						if (threshold_low_flag[j][i] == 7) { threshold_low = V270[j][i];}
+						if (threshold_low_flag[j][i] == 8) { threshold_low = V315[j][i];}
+
+						
+
+						if (threshold_high_flag[j][i] == 1) { threshold_high = V0[j][i];}
+						if (threshold_high_flag[j][i] == 2) { threshold_high = V45[j][i];}
+						if (threshold_high_flag[j][i] == 3) { threshold_high = V90[j][i];}
+						if (threshold_high_flag[j][i] == 4) { threshold_high = V135[j][i];}
+						if (threshold_high_flag[j][i] == 5) { threshold_high = V180[j][i];}
+						if (threshold_high_flag[j][i] == 6) { threshold_high = V225[j][i];}
+						if (threshold_high_flag[j][i] == 7) { threshold_high = V270[j][i];}
+						if (threshold_high_flag[j][i] == 8) { threshold_high = V315[j][i];}
+						
+
+					}
+					
 
 			use_Rvector_flag = threshold_high_flag[j][i];	//基本は正の閾値を取る
 
@@ -616,13 +643,13 @@ int cossim(char date_directory[],int &image_x,int &image_y,int paramerter[],int 
 			printf("j=%d:%d,",j,use_Rvector_flag[j]);
 			*/
 //////////////ファイルへの書き込み(fp_use_Rvector_flag,fp_use_Rvector_number)/////////////////////////////////////////////
+				if (cos_eco_mode_flag != 1) {
+					fprintf(fp_use_Rvector_flag, "%d,", use_Rvector_flag);
+					if (j == image_x - 1) { fprintf(fp_use_Rvector_flag, "\n"); }
 
-			fprintf(fp_use_Rvector_flag,"%d,",use_Rvector_flag);
-			if(j==image_x-1){fprintf(fp_use_Rvector_flag,"\n");}
-
-			fprintf(fp_use_Rvector_number,"%d,",use_Rvector_number);
-			if(j==image_x-1){fprintf(fp_use_Rvector_number,"\n");}
-
+					fprintf(fp_use_Rvector_number, "%d,", use_Rvector_number);
+					if (j == image_x - 1) { fprintf(fp_use_Rvector_number, "\n"); }
+				}
 /////////////////////////計算//////////////////////////////////////////////////////////////////////////////////////////////
 			if(direction_number==8){
 				innerp[j][i] = (Rvector[use_Rvector_number][1]*V0[j][i]) + (Rvector[use_Rvector_number][2]*V45[j][i]) + (Rvector[use_Rvector_number][3]*V90[j][i]) + (Rvector[use_Rvector_number][4]*V135[j][i]) 
@@ -674,19 +701,22 @@ int cossim(char date_directory[],int &image_x,int &image_y,int paramerter[],int 
 				Angle[j][i] = Angle[j][i] +360;
 			}
 
+			if (Rvector_sqrt[use_Rvector_number] == 0 || V_sqrt[j][i] == 0)Angle[j][i] = 334000;
+
 /////////////////////////計算終わり/////////////////////////////////////////////////////////////////////////////////////////////
 
 ///////////////////ファイルへの書き込み(一行ずつ書き込み）////////////////////////////////////////////////////////////////////////
-			
-			fprintf(fp_innerp,"%lf,",innerp[j][i]);
-			if(j==image_x-1){fprintf(fp_innerp,"\n");}
-			
-			fprintf(fp_V_sqrt,"%lf,",V_sqrt[j][i]);
-			if(j==image_x-1){fprintf(fp_V_sqrt,"\n");}
-		
-			fprintf(fp_Cos_similarity,"%lf,",Cos_similarity[j][i]);
-			if(j==image_x-1){fprintf(fp_Cos_similarity,"\n");}
-	
+			if (cos_eco_mode_flag != 1) {
+				fprintf(fp_innerp, "%lf,", innerp[j][i]);
+				if (j == image_x - 1) { fprintf(fp_innerp, "\n"); }
+
+				fprintf(fp_V_sqrt, "%lf,", V_sqrt[j][i]);
+				if (j == image_x - 1) { fprintf(fp_V_sqrt, "\n"); }
+
+				fprintf(fp_Cos_similarity, "%lf,", Cos_similarity[j][i]);
+				if (j == image_x - 1) { fprintf(fp_Cos_similarity, "\n"); }
+			}
+
 			fprintf(fp_Angle,"%lf,",Angle[j][i]);
 			if(j==image_x-1){fprintf(fp_Angle,"\n");}
 		
@@ -699,13 +729,16 @@ int cossim(char date_directory[],int &image_x,int &image_y,int paramerter[],int 
 ///////////////////////////書き込み終わり/////////////////////////////////////////////////////////			
 
 	//ファイルを閉じる
-	fclose(fp_innerp);
-	fclose(fp_V_sqrt);
-	fclose(fp_Cos_similarity);
+			if (cos_eco_mode_flag != 1) {
+				fclose(fp_innerp);
+				fclose(fp_V_sqrt);
+				fclose(fp_Cos_similarity);
+				fclose(fp_threshold_high);
+				fclose(fp_threshold);
+			}
+
 	fclose(fp_Angle);
-	fclose(fp_threshold_high);
 	fclose(fp_threshold2);
-	fclose(fp_threshold);
 
 ////////////////////////logファイルの作成//////////////////////////////////////////////////////////////////////////
 	FILE *fp_date;
@@ -768,15 +801,19 @@ void Read_output(){
 	sprintf(math_name9,"%s\\%s",date_directory3, math_name9_s);
 
 	//確認
-	if((fp_innerp=fopen(math_name1,"w"))==NULL){printf("入力エラー innerp.csvが開けません\nFile_name : %s",math_name1);exit(1);}
-	if((fp_V_sqrt=fopen(math_name2,"w"))==NULL){printf("入力エラー V_sqrt.csvが開けません\nFile_name : %s",math_name2);exit(1);}
-	if((fp_Cos_similarity=fopen(math_name3,"w"))==NULL){printf("入力エラー Cos_similarity.csvが開けません\nFile_name : %s",math_name3);exit(1);}
-	if((fp_Angle=fopen(math_name4,"w"))==NULL){printf("入力エラー Angle.csvが開けません\nFile_name : %s",math_name4);exit(1);}
-	if((fp_threshold_high=fopen(math_name5,"w"))==NULL){printf("入力エラー threshold_high.csvが開けません\nFile_name : %s",math_name5);exit(1);}
-	if((fp_use_Rvector_flag=fopen(math_name6,"w"))==NULL){printf("入力エラー use_Rvector_flag.csvが開けません\nFile_name : %s",math_name6);exit(1);}
-	if((fp_use_Rvector_number=fopen(math_name7,"w"))==NULL){printf("入力エラー use_Rvector_number.csvが開けません\nFile_name : %s",math_name7);exit(1);}
-	if((fp_threshold2=fopen(math_name8,"w"))==NULL){printf("入力エラー threshold2.csvが開けません\nFile_name : %s",math_name8);exit(1);}
-	if((fp_threshold=fopen(math_name9,"w"))==NULL){printf("入力エラー threshold.csvが開けません\nFile_name : %s",math_name9);exit(1);}
+	if (cos_eco_mode_flag != 1) {
+		if ((fp_innerp = fopen(math_name1, "w")) == NULL) { printf("入力エラー innerp.csvが開けません\nFile_name : %s", math_name1); exit(1); }
+		if ((fp_V_sqrt = fopen(math_name2, "w")) == NULL) { printf("入力エラー V_sqrt.csvが開けません\nFile_name : %s", math_name2); exit(1); }
+		if ((fp_Cos_similarity = fopen(math_name3, "w")) == NULL) { printf("入力エラー Cos_similarity.csvが開けません\nFile_name : %s", math_name3); exit(1); }
+		
+		if ((fp_threshold_high = fopen(math_name5, "w")) == NULL) { printf("入力エラー threshold_high.csvが開けません\nFile_name : %s", math_name5); exit(1); }
+		if ((fp_use_Rvector_flag = fopen(math_name6, "w")) == NULL) { printf("入力エラー use_Rvector_flag.csvが開けません\nFile_name : %s", math_name6); exit(1); }
+		if ((fp_use_Rvector_number = fopen(math_name7, "w")) == NULL) { printf("入力エラー use_Rvector_number.csvが開けません\nFile_name : %s", math_name7); exit(1); }
+		
+		if ((fp_threshold = fopen(math_name9, "w")) == NULL) { printf("入力エラー threshold.csvが開けません\nFile_name : %s", math_name9); exit(1); }
+	}
+	if ((fp_Angle = fopen(math_name4, "w")) == NULL) { printf("入力エラー Angle.csvが開けません\nFile_name : %s", math_name4); exit(1); }
+	if ((fp_threshold2 = fopen(math_name8, "w")) == NULL) { printf("入力エラー threshold2.csvが開けません\nFile_name : %s", math_name8); exit(1); }
 
 }
 

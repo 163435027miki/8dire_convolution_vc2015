@@ -13,6 +13,8 @@
 
 #define PI 3.14159265
 
+int B_eco_mode_flag = 1;
+
 using namespace std;
 
 //メモリ確保を行うためのヘッダ
@@ -50,10 +52,10 @@ int Bazen_kernel(char date_directory[], int &image_x, int &image_y,int paramerte
 	char math_Bazen_atan8[128];							//2つの閾値を一つに
 	char math_Bazen_atan9[128];							//threshold(use_Rvector_flagの応答電圧Vの大きさ）
 	
-	double threshold_high;
-	double threshold_low;
-	double threshold_low_abs;
-	double threshold_high_abs;
+	double threshold_high=0;
+	double threshold_low=0;
+	double threshold_low_abs=0;
+	double threshold_high_abs=0;
 
 	FILE *fp_arctan,*fp_threshold_low,*fp_threshold_high,*fp_threshold2;
 
@@ -195,9 +197,12 @@ int Bazen_kernel(char date_directory[], int &image_x, int &image_y,int paramerte
 
 /////////////////////////出力ファイルを開く///////////////////////////////////////////////////////////////////////////////////
 	if((fp_arctan=fopen(math_Bazen_atan1,"w"))==NULL){cout<<"入力エラー Bazen_arctan.csvが開けません";exit(1);}
-	if((fp_threshold_high=fopen(math_Bazen_atan5,"w"))==NULL){cout<<"入力エラー threshold_high.csvが開けません";exit(1);}
 	if((fp_threshold2=fopen(math_Bazen_atan8,"w"))==NULL){cout<<"入力エラー threshold2.csvが開けません";exit(1);}
-	if((fp_threshold_low=fopen(math_Bazen_atan9,"w"))==NULL){cout<<"入力エラー threshold.csvが開けません";exit(1);}
+
+	if (B_eco_mode_flag != 1) {
+		if ((fp_threshold_high = fopen(math_Bazen_atan5, "w")) == NULL) { cout << "入力エラー threshold_high.csvが開けません"; exit(1); }
+		if ((fp_threshold_low = fopen(math_Bazen_atan9, "w")) == NULL) { cout << "入力エラー threshold.csvが開けません"; exit(1); }
+	}
 	
 	//ファイルへの書き込み
 	for(j=0;j<image_y;++j){
@@ -207,15 +212,29 @@ int Bazen_kernel(char date_directory[], int &image_x, int &image_y,int paramerte
 		fprintf(fp_arctan,"%lf,",Angle[i][j]);
 		if(i==image_x - 1){fprintf(fp_arctan,"\n");}
 
-		//上の閾値
-		if(threshold_atan_high_flag[i][j]==1){threshold_high=V0[i][j];fprintf(fp_threshold_high,"%lf,",threshold_high);}
-		if(threshold_atan_high_flag[i][j]==3){threshold_high=V90[i][j];fprintf(fp_threshold_high,"%lf,",threshold_high);}
-		if(i==image_x - 1){fprintf(fp_threshold_high,"\n");}
+		if (B_eco_mode_flag != 1) {
+			//上の閾値
+			if (threshold_atan_high_flag[i][j] == 1) { threshold_high = V0[i][j]; fprintf(fp_threshold_high, "%lf,", threshold_high); }
+			if (threshold_atan_high_flag[i][j] == 3) { threshold_high = V90[i][j]; fprintf(fp_threshold_high, "%lf,", threshold_high); }
+			if (i == image_x - 1) { fprintf(fp_threshold_high, "\n"); }
 
-		//下の閾値
-		if(threshold_atan_low_flag[i][j]==1){threshold_low=V0[i][j];fprintf(fp_threshold_low,"%lf,",threshold_low);}
-		if(threshold_atan_low_flag[i][j]==3){threshold_low=V90[i][j];fprintf(fp_threshold_low,"%lf,",threshold_low);}
-		if(i==image_x - 1){fprintf(fp_threshold_low,"\n");}
+			//下の閾値
+			if (threshold_atan_low_flag[i][j] == 1) { threshold_low = V0[i][j]; fprintf(fp_threshold_low, "%lf,", threshold_low); }
+			if (threshold_atan_low_flag[i][j] == 3) { threshold_low = V90[i][j]; fprintf(fp_threshold_low, "%lf,", threshold_low); }
+			if (i == image_x - 1) { fprintf(fp_threshold_low, "\n"); }
+		}
+		else {
+			//上の閾値
+			if (threshold_atan_high_flag[i][j] == 1) { threshold_high = V0[i][j];}
+			if (threshold_atan_high_flag[i][j] == 3) { threshold_high = V90[i][j];}
+			
+
+			//下の閾値
+			if (threshold_atan_low_flag[i][j] == 1) { threshold_low = V0[i][j];}
+			if (threshold_atan_low_flag[i][j] == 3) { threshold_low = V90[i][j]; }
+			
+
+		}
 
 		threshold_high_abs=threshold_high;
 		threshold_low_abs=threshold_low;
@@ -236,9 +255,11 @@ int Bazen_kernel(char date_directory[], int &image_x, int &image_y,int paramerte
 		
 	//ファイルを閉じる
 	fclose(fp_arctan);
-	fclose(fp_threshold_high);
 	fclose(fp_threshold2);
-	fclose(fp_threshold_low);
+	if (B_eco_mode_flag != 1) {
+		fclose(fp_threshold_high);
+		fclose(fp_threshold_low);
+	}
 	
 ////////////////////////logファイルの作成//////////////////////////////////////////////////////////////////////////
 	FILE *fp_date;
@@ -448,7 +469,7 @@ int Bazen(char image_nameP2[],int &image_x,int &image_y,int paramerter[],int par
 	FILE *fp_date;
 	char filename_log[128];
 	sprintf(filename_log, "%s\\log_Bazen.txt",date_directory10);	//logファイル作成のディレクトリ指定
-	if((fp_date=fopen(filename_log,"w"))==NULL){printf("logファイルが開けません");exit(1);}
+	if((fp_date=fopen(filename_log,"w"))==NULL){printf("logファイル：%sが開けません", filename_log);exit(1);}
 	fprintf(fp_date,"Time       : %s\n",date);						//時間
 	fprintf(fp_date,"保存先     : %s\n",date_directory);			//保存先
 	fclose(fp_date);

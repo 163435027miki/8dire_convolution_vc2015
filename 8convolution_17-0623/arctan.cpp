@@ -7,6 +7,7 @@
 #include <direct.h>//フォルダを作成す
 #include<stdio.h>
 
+int atan_eco_mode_flag = 1;
 
 //メモリ確保を行うためのヘッダ
 #define ANSI				
@@ -37,8 +38,8 @@ int arctan(char date_directory[], int &image_x, int &image_y,int paramerter[],in
 	char math_atan8[128];							//2つの閾値を一つに
 	char math_atan9[128];							//threshold(use_Rvector_flagの応答電圧Vの大きさ）
 
-	double threshold_atan_high;
-	double threshold_atan_low;
+	double threshold_atan_high=0;
+	double threshold_atan_low=0;
 	double threshold_atan_low_abs;
 	double threshold_atan_high_abs;
 
@@ -115,9 +116,12 @@ int arctan(char date_directory[], int &image_x, int &image_y,int paramerter[],in
 
 /////////////////////////出力ファイルを開く///////////////////////////////////////////////////////////////////////////////////
 	if ((fp_arctan = fopen(math_atan1, "w")) == NULL) {printf("出力ファイル : arctan.csvが開けません\n出力ファイルディレクトリ：%s\n",math_atan1); exit(1); }
-	if ((fp_threshold_atan_high = fopen(math_atan5, "w")) == NULL) {printf("出力ファイル : threshold_atan_high.csvが開けません\n出力ファイルディレクトリ：%s\n",math_atan5); exit(1); }
 	if ((fp_atan_threshold2 = fopen(math_atan8, "w")) == NULL) {printf("出力ファイル : threshold2.csvが開けません\n出力ファイルディレクトリ：%s\n",math_atan8); exit(1); }
-	if ((fp_threshold_atan_low = fopen(math_atan9, "w")) == NULL) {printf("出力ファイル : threshold.csvが開けません\n出力ファイルディレクトリ：%s\n",math_atan9); exit(1); }
+
+	if (atan_eco_mode_flag != 1) {
+		if ((fp_threshold_atan_high = fopen(math_atan5, "w")) == NULL) { printf("出力ファイル : threshold_atan_high.csvが開けません\n出力ファイルディレクトリ：%s\n", math_atan5); exit(1); }
+		if ((fp_threshold_atan_low = fopen(math_atan9, "w")) == NULL) { printf("出力ファイル : threshold.csvが開けません\n出力ファイルディレクトリ：%s\n", math_atan9); exit(1); }
+	}
 
 ///////////////////////応答電圧のcsvの読み込み//////////////////////////////////////////////////////////////////////////////////////////
 	i = 0;
@@ -204,15 +208,29 @@ int arctan(char date_directory[], int &image_x, int &image_y,int paramerter[],in
 			fprintf(fp_arctan, "%lf,", Angle[j][i]);
 			if (j == image_x - 1) { fprintf(fp_arctan, "\n"); }
 
-			//上の閾値
-			if (threshold_atan_high_flag[j][i] == 1) { threshold_atan_high = V0[j][i]; fprintf(fp_threshold_atan_high, "%lf,", threshold_atan_high); }
-			if (threshold_atan_high_flag[j][i] == 3) { threshold_atan_high = V90[j][i]; fprintf(fp_threshold_atan_high, "%lf,", threshold_atan_high); }
-			if (j == image_x - 1) { fprintf(fp_threshold_atan_high, "\n"); }
+			if (atan_eco_mode_flag != 1) {
+				//上の閾値
+				if (threshold_atan_high_flag[j][i] == 1) { threshold_atan_high = V0[j][i]; fprintf(fp_threshold_atan_high, "%lf,", threshold_atan_high); }
+				if (threshold_atan_high_flag[j][i] == 3) { threshold_atan_high = V90[j][i]; fprintf(fp_threshold_atan_high, "%lf,", threshold_atan_high); }
+				if (j == image_x - 1) { fprintf(fp_threshold_atan_high, "\n"); }
 
-			//下の閾値
-			if (threshold_atan_low_flag[j][i] == 1) { threshold_atan_low = V0[j][i]; fprintf(fp_threshold_atan_low, "%lf,", threshold_atan_low); }
-			if (threshold_atan_low_flag[j][i] == 3) { threshold_atan_low = V90[j][i]; fprintf(fp_threshold_atan_low, "%lf,", threshold_atan_low); }
-			if (j == image_x - 1) { fprintf(fp_threshold_atan_low, "\n"); }
+				//下の閾値
+				if (threshold_atan_low_flag[j][i] == 1) { threshold_atan_low = V0[j][i]; fprintf(fp_threshold_atan_low, "%lf,", threshold_atan_low); }
+				if (threshold_atan_low_flag[j][i] == 3) { threshold_atan_low = V90[j][i]; fprintf(fp_threshold_atan_low, "%lf,", threshold_atan_low); }
+				if (j == image_x - 1) { fprintf(fp_threshold_atan_low, "\n"); }
+			}
+			else {
+				//上の閾値
+				if (threshold_atan_high_flag[j][i] == 1) { threshold_atan_high = V0[j][i];}
+				if (threshold_atan_high_flag[j][i] == 3) { threshold_atan_high = V90[j][i]; }
+				
+
+				//下の閾値
+				if (threshold_atan_low_flag[j][i] == 1) { threshold_atan_low = V0[j][i]; }
+				if (threshold_atan_low_flag[j][i] == 3) { threshold_atan_low = V90[j][i];}
+				
+
+			}
 
 			threshold_atan_high_abs = threshold_atan_high;
 			threshold_atan_low_abs = threshold_atan_low;
@@ -232,9 +250,11 @@ int arctan(char date_directory[], int &image_x, int &image_y,int paramerter[],in
 
 	//ファイルを閉じる
 	fclose(fp_arctan);
-	fclose(fp_threshold_atan_high);
 	fclose(fp_atan_threshold2);
-	fclose(fp_threshold_atan_low);
+	if (atan_eco_mode_flag != 1) {
+		fclose(fp_threshold_atan_high);
+		fclose(fp_threshold_atan_low);
+	}
 			
 ////////////////////////logファイルの作成//////////////////////////////////////////////////////////////////////////
 	FILE *fp_date;

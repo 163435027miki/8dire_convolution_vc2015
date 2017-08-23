@@ -40,3 +40,14 @@ int log_create(char date_directory[],int cols,int rows,double sin_frequency,doub
 
 	return 0;
 }*/
+
+int notimeset(char date[], int pixel[], int Togire[], int z2, int z) {
+	//ÀsŠÔ‚Ìæ“¾
+	time_t now = time(NULL);
+	struct tm *pnow = localtime(&now);
+
+	sprintf(date, "15-%dp-%dT", pixel[z2],Togire[z]);
+	printf(date);
+	printf("\n");
+	return *date;
+}

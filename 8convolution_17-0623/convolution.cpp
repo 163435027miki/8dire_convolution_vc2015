@@ -20,6 +20,8 @@
 
 using namespace std;
 
+int conv_eco_mode_flag = 1;
+
 int x, y, fx, fy;
 FILE *fp;
 
@@ -101,21 +103,33 @@ int convolution(int argc, char** argv,char image_nameP2[],int &image_x,int &imag
 	int Save_image_flag[9][9];
 
 /////////////画像作成の有無////////////////////////////////////////////////////////////////
+
 	//画像作成判断の初期化(デフォルトでは作成しない)
 	for (int i = 0; i<9; ++i) {
 		Save_image_flag[1][i] = 0;
 		Save_image_flag[2][i] = 0;
 	}
 
+	//ecoモード
+	if (conv_eco_mode_flag == 1) {
+		for (int j = 0; j < 2; ++j) {
+			for (int i = 0; i < 9; ++i) {
+				Save_image_flag[j][i] = 0;
+			}
+		}
+	}
+
 	//多値画像を作成する
-	Save_image_flag[2][0] = 0;		//多値画像を作成するとき1
+	Save_image_flag[2][0] = 1;		//多値画像を作成するとき1
 
 
 	//8方向に画像を作成する
 	for (int i = 1; i <= 8; ++i) {
 
-		Save_image_flag[2][i] = 0;	//作成したい方向の画像の選択．iを指定
+		Save_image_flag[2][i] = 1;	//作成したい方向の画像の選択．iを指定
 	}
+
+	
 
 
 ////////////////////////////////////////////入力画像の読み込み////////////////////////////////////////////////////////////////////////////
@@ -514,6 +528,7 @@ int convolution_gaus_sobel(int &image_y,int &image_x,int fs, int hfs,double *out
 
 	//gausフィルタによるなめし
 	for (y = 0; y < image_y; y++) {
+#pragma omp parallel for
 		for (x = 0; x < image_x; x++) {
 			for (fy = 1; fy <= fs; fy++) {
 				for (fx = 1; fx <= fs; fx++) {
@@ -534,6 +549,7 @@ int convolution_gaus_sobel(int &image_y,int &image_x,int fs, int hfs,double *out
 	
 	//なめした画像に対してsobelフィルタを掛ける
 	for (y = 0; y < image_y; y++) {
+#pragma omp parallel for
 		for (x = 0; x < image_x; x++) {
 			
 			for (fy = 1; fy <= fs; fy++) {

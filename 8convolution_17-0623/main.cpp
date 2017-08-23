@@ -18,11 +18,12 @@ int sd;
 
 
 //•W€•Î·‚Ì’²®‰ÓŠ
-int sd_max = 0;
+int sd_max = 50;
 int paramerter_count_max = 3;
 
 
 int timeset(char date[]);
+int notimeset(char date[], int pixel[], int Togire[], int z2, int z);
 int convolution(int argc, char** argv,char image_nameP2[],int &image_x,int &image_y,int paramerter[],int paramerter_count,int sd,char date[],char date_directory[]);
 int cossim(char date_directory[], int &image_x, int &image_y,int paramerter[],int paramerter_count,int sd,char date[]);
 int arctan(char date_directory[], int &image_x, int &image_y,int paramerter[],int paramerter_count,int sd,char date[]);
@@ -42,23 +43,27 @@ int main(int argc, char** argv){
 	int paramerter[4]={2,3,5,7};		//paramerter[0]=1‚ÅsobelƒtƒBƒ‹ƒ^,paramerter[0]=2‚Ågaus~sobelƒtƒBƒ‹ƒ^
 	int paramerter_count=0;
 
-	for (int z2 = 1; z2 <= 7; ++z2) {		//pixel
-		for (int z = 1; z <= 7; ++z) {		//Togire
+	//for (int z2 = 1; z2 <= 7; ++z2) {		//pixel
+	//	for (int z = 1; z <= 7; ++z) {		//Togire
+		
 
 			timeset(date);
+		//	notimeset(date, pixel, Togire,z2,z);
 
 			for (int paramerter_count = 1; paramerter_count <= 3; ++paramerter_count) {
 
 				for (sd = 0; sd <= sd_max; sd = sd + 10) {
+				//for (sd = 30; sd <= 30; sd = sd + 10) {
 
 					if (paramerter[0] == 1 || paramerter[0] == 2) {
-						//sprintf(image_nameP,"..\\property_usa\\simulation17-0718\\sobel\\property_%d~%dsobel_conv_",paramerter[paramerter_count],paramerter[paramerter_count]);
-						sprintf(image_nameP, "..\\property_usa\\simulation17-0725\\sobel\\15-%dp-%dT_sobel", pixel[z2], Togire[z], paramerter[paramerter_count]);
-						sprintf(image_nameP2, "%s\\property_%d~%dsobel_conv_sd%d.txt", image_nameP, paramerter[paramerter_count], paramerter[paramerter_count], sd);
+						sprintf(image_nameP,"..\\property_usa\\simulation17-0823\\real3_sobel\\property_%d~%dsobel_conv_",paramerter[paramerter_count],paramerter[paramerter_count]);
+					//	sprintf(image_nameP, "..\\property_usa\\simulation17-0725\\sobel\\15-%dp-%dT_sobel", pixel[z2], Togire[z], paramerter[paramerter_count]);
+						sprintf(image_nameP2, "%ssd%d.txt", image_nameP, sd);
+						//sprintf(image_nameP2, "%s\\property_%d~%dsobel_conv_sd%d.txt", image_nameP, paramerter[paramerter_count], paramerter[paramerter_count], sd);
 					}
 					else {
-						sprintf(image_nameP, "..\\property_usa\\simulation17-0725\\kernel\\15-%dp-%dT\\property_%dk_conv_", pixel[z2], Togire[z], paramerter[paramerter_count]);
-						//sprintf(image_nameP,"..\\property_usa\\simulation17-0725\\property_%dk_conv_", paramerter[paramerter_count]);
+						//sprintf(image_nameP, "..\\property_usa\\simulation17-0821\\kernel\\15-%dp-%dT\\property_%dk_conv_", pixel[z2], Togire[z], paramerter[paramerter_count]);
+						sprintf(image_nameP,"..\\property_usa\\simulation17-0823\\real3\\property_%dk_conv_", paramerter[paramerter_count]);
 						sprintf(image_nameP2, "%ssd%d.txt", image_nameP, sd);
 					}
 
@@ -79,11 +84,11 @@ int main(int argc, char** argv){
 					//arctan(date_directory,image_x,image_y,paramerter,paramerter_count,sd,date);
 					//Bazen_kernel(date_directory,image_x,image_y,paramerter,paramerter_count,sd,date);
 
-					Bazen(image_nameP2,image_x,image_y,paramerter,paramerter_count,sd,date,date_directory);
+					//Bazen(image_nameP2,image_x,image_y,paramerter,paramerter_count,sd,date,date_directory);
 				}
 			}
-		}
-	}
+		//}
+	//}
 		//s‚Ì‚Ü‚Æ‚ß
 		//cossim_result_row(date_directory, image_x ,image_y,paramerter,paramerter_count_max,sd_max);
 
