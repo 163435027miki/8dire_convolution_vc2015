@@ -313,9 +313,12 @@ int Bazen_s(int &image_y,int &image_x,double *Gxx[],double *Gyy[],double *Gxy[],
 				for(int l=j-7;l<j+8+1;++l){
 					for(int k=i-7;k<i+8+1;++k){
 						if(l>=0 && k>=0 && l<image_x && k<image_y){	//領域が画像外にはみ出る場合は0として和を行う
-							sGxx[i][j]=sGxx[i][j]+Gxx[k][l];
+							/*sGxx[i][j]=sGxx[i][j]+Gxx[k][l];
 							sGyy[i][j]=sGyy[i][j]+Gyy[k][l];
-							sGxy[i][j]=sGxy[i][j]+Gxy[k][l];
+							sGxy[i][j]=sGxy[i][j]+Gxy[k][l];*/
+							sGxx[i][j]+=Gxx[k][l];
+							sGyy[i][j]+=Gyy[k][l];
+							sGxy[i][j]+=Gxy[k][l];
 						}
 					}
 				}
@@ -332,8 +335,42 @@ int Bazen_s(int &image_y,int &image_x,double *Gxx[],double *Gyy[],double *Gxy[],
 				if(AngleF[i][j]>0)Angle[i][j]=AngleF[i][j]-(PI/2);
 
 				Angle[i][j]=Angle[i][j]*180/PI;
+				//if (Angle[i][j] < 0)Angle[i][j] += 180;
 			}
 		}
+		/*
+		FILE *fp_Bazen1, *fp_Bazen2, *fp_Bazen3, *fp_Bazen4, *fp_Bazen5;
+		char math_Bazen_atan11[128] = "..\\result_usa\\Gxx.csv";				//出力ファイルのディレクトリ
+		char math_Bazen_atan12[128] = "..\\result_usa\\Gyy.csv";				//出力ファイルのディレクトリ
+		char math_Bazen_atan13[128] = "..\\result_usa\\Gxy.csv";				//出力ファイルのディレクトリ
+		char math_Bazen_atan14[128] = "..\\result_usa\\AngleF.csv";				//出力ファイルのディレクトリ
+		char math_Bazen_atan15[128] = "..\\result_usa\\Angle.csv";				//出力ファイルのディレクトリ
+		if ((fp_Bazen1 = fopen(math_Bazen_atan11, "w")) == NULL) { cout << "入力エラー Bazen.csvが開けません"; exit(1); }
+		if ((fp_Bazen2 = fopen(math_Bazen_atan12, "w")) == NULL) { cout << "入力エラー Bazen.csvが開けません"; exit(1); }
+		if ((fp_Bazen3 = fopen(math_Bazen_atan13, "w")) == NULL) { cout << "入力エラー Bazen.csvが開けません"; exit(1); }
+		if ((fp_Bazen4 = fopen(math_Bazen_atan14, "w")) == NULL) { cout << "入力エラー Bazen.csvが開けません"; exit(1); }
+		if ((fp_Bazen5 = fopen(math_Bazen_atan15, "w")) == NULL) { cout << "入力エラー Bazen.csvが開けません"; exit(1); }
+		for (int j = 0; j<image_y - 1; ++j) {
+			for (int i = 0; i<image_x - 1; ++i) {
+				//fprintf(fp_Bazen,"%lf,",Angle[i][j]);
+				fprintf(fp_Bazen1, "%lf,", sGxx[i][j]);
+				fprintf(fp_Bazen2, "%lf,", sGyy[i][j]);
+				fprintf(fp_Bazen3, "%lf,", sGxy[i][j]);
+				fprintf(fp_Bazen4, "%lf,", AngleF[i][j]);
+				fprintf(fp_Bazen5, "%lf,", Angle[i][j]);
+				if (i == image_x - 2) { fprintf(fp_Bazen1, "\n"); }
+				if (i == image_x - 2) { fprintf(fp_Bazen2, "\n"); }
+				if (i == image_x - 2) { fprintf(fp_Bazen3, "\n"); }
+				if (i == image_x - 2) { fprintf(fp_Bazen4, "\n"); }
+				if (i == image_x - 2) { fprintf(fp_Bazen5, "\n"); }
+			}
+		}
+		fclose(fp_Bazen1);
+		fclose(fp_Bazen2);
+		fclose(fp_Bazen3);
+		fclose(fp_Bazen4);
+		fclose(fp_Bazen5);
+		*/
 
 		//領域の解放
 		free_matrix(AngleF, 0, image_x - 1, 0, image_y - 1);
@@ -455,14 +492,28 @@ int Bazen(char image_nameP2[],int &image_x,int &image_y,int paramerter[],int par
 	Bazen_s(image_y,image_x,Gxx,Gyy,Gxy,AngleF,Angle);	//Bazenの方法によって角度を求める
 
 	//結果の書き込み
+	
+	
 	FILE *fp_Bazen;
-	if((fp_Bazen=fopen(math_Bazen_atan10,"w"))==NULL){cout<<"入力エラー Bazen.csvが開けません";exit(1);}
-	for(int j=0;j<image_y-1;++j){
-			for(int i=0;i<image_x-1;++i){
+	if ((fp_Bazen = fopen(math_Bazen_atan10, "w")) == NULL) { cout << "入力エラー Bazen.csvが開けません"; exit(1); }
+	for (int j = 0; j<image_y - 1; ++j) {
+		for (int i = 0; i<image_x - 1; ++i) {
 			fprintf(fp_Bazen,"%lf,",Angle[i][j]);
-			if(i==image_x - 2){fprintf(fp_Bazen,"\n");}
-			}
+			
+			if (i == image_x - 2) { fprintf(fp_Bazen, "\n"); }
+		}
 	}
+	/*
+	for (int j = 0; j<image_y - 1; ++j) {
+		for (int i = 0; i<image_x - 1; ++i) {
+			//fprintf(fp_Bazen,"%lf,",Angle[i][j]);
+			fprintf(fp_Bazen, "%lf,", Gxy[i][j]);
+			if (i == image_x - 2) { fprintf(fp_Bazen, "\n"); }
+		}
+	}
+	*/
+
+
 	fclose(fp_Bazen);
 
 	//logファイルの書き込み

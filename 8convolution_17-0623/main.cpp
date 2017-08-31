@@ -40,7 +40,7 @@ int main(int argc, char** argv){
 	int Togire[10] = { 0,1,3,5,7,9,13,17 };
 	
 
-	int paramerter[4]={2,3,5,7};		//paramerter[0]=1でsobelフィルタ,paramerter[0]=2でgaus×sobelフィルタ
+	int paramerter[4]={0,3,10,100};		//paramerter[0]=1でsobelフィルタ,paramerter[0]=2でgaus×sobelフィルタ
 	int paramerter_count=0;
 
 	//for (int z2 = 1; z2 <= 7; ++z2) {		//pixel
@@ -50,13 +50,13 @@ int main(int argc, char** argv){
 			timeset(date);
 		//	notimeset(date, pixel, Togire,z2,z);
 
-			for (int paramerter_count = 1; paramerter_count <= 3; ++paramerter_count) {
+			for (int paramerter_count = 1; paramerter_count <= 1; ++paramerter_count) {
 
 				for (sd = 0; sd <= sd_max; sd = sd + 10) {
-				//for (sd = 30; sd <= 30; sd = sd + 10) {
+				//for (sd = 0; sd <= 0; sd = sd + 10) {
 
 					if (paramerter[0] == 1 || paramerter[0] == 2) {
-						sprintf(image_nameP,"..\\property_usa\\simulation17-0823\\real3_sobel\\property_%d×%dsobel_conv_",paramerter[paramerter_count],paramerter[paramerter_count]);
+						sprintf(image_nameP,"..\\property_usa\\simulation17-0825\\sobel\\property_%d×%dsobel_conv_",paramerter[paramerter_count],paramerter[paramerter_count]);
 					//	sprintf(image_nameP, "..\\property_usa\\simulation17-0725\\sobel\\15-%dp-%dT_sobel", pixel[z2], Togire[z], paramerter[paramerter_count]);
 						sprintf(image_nameP2, "%ssd%d.txt", image_nameP, sd);
 						//sprintf(image_nameP2, "%s\\property_%d×%dsobel_conv_sd%d.txt", image_nameP, paramerter[paramerter_count], paramerter[paramerter_count], sd);
@@ -65,6 +65,8 @@ int main(int argc, char** argv){
 						//sprintf(image_nameP, "..\\property_usa\\simulation17-0821\\kernel\\15-%dp-%dT\\property_%dk_conv_", pixel[z2], Togire[z], paramerter[paramerter_count]);
 						sprintf(image_nameP,"..\\property_usa\\simulation17-0823\\real3\\property_%dk_conv_", paramerter[paramerter_count]);
 						sprintf(image_nameP2, "%ssd%d.txt", image_nameP, sd);
+						//sprintf(image_nameP, "..\\property_usa\\simulation17-0824-2\\property_B135");
+						//sprintf(image_nameP2, "%s.txt", image_nameP);
 					}
 
 					convolution(argc, argv, image_nameP2, image_x, image_y, paramerter, paramerter_count, sd, date, date_directory);
