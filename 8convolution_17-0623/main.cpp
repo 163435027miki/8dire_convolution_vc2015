@@ -50,7 +50,7 @@ int main(int argc, char** argv){
 			timeset(date);
 		//	notimeset(date, pixel, Togire,z2,z);
 
-			for (int paramerter_count = 1; paramerter_count <= 1; ++paramerter_count) {
+			for (int paramerter_count = 1; paramerter_count <= 3; ++paramerter_count) {
 
 				for (sd = 0; sd <= sd_max; sd = sd + 10) {
 				//for (sd = 0; sd <= 0; sd = sd + 10) {
@@ -63,7 +63,7 @@ int main(int argc, char** argv){
 					}
 					else {
 						//sprintf(image_nameP, "..\\property_usa\\simulation17-0821\\kernel\\15-%dp-%dT\\property_%dk_conv_", pixel[z2], Togire[z], paramerter[paramerter_count]);
-						sprintf(image_nameP,"..\\property_usa\\simulation17-0823\\real3\\property_%dk_conv_", paramerter[paramerter_count]);
+						sprintf(image_nameP,"..\\property_usa\\simulation17-0901\\real3\\property_%dk_conv_", paramerter[paramerter_count]);
 						sprintf(image_nameP2, "%ssd%d.txt", image_nameP, sd);
 						//sprintf(image_nameP, "..\\property_usa\\simulation17-0824-2\\property_B135");
 						//sprintf(image_nameP2, "%s.txt", image_nameP);

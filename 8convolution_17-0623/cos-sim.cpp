@@ -67,6 +67,7 @@ int i,j;
 	char *math_name8_s = "threshold2.csv";
 	char *math_name9_s = "threshold_low.csv";
 	char *math_name10_s = "threshold3.csv";
+	char *math_name11_s = "use_Rvector_number_LC.csv";
 
 	char Input_Rvectormagni_name[255];
 	char Input_Rvectorname1[250];					//基準ベクトル名・基準ベクトルの入力先の設定
@@ -97,6 +98,7 @@ int i,j;
 	char math_name8[128];							//2つの閾値を一つに
 	char math_name9[128];							//threshold(use_Rvector_flagの応答電圧Vの大きさ）
 	char math_name10[128];							//局所連結性を考慮したthreshold(use_Rvector_flagの応答電圧Vの大きさ）
+	char math_name11[128];							//局所連結性を確認したときのuse_Rvector_number
 
 	double Rvectormagni[10];						//基準ベクトルの倍率		
 	double Rvector_sqrt[9];							//Rvectorの大きさ
@@ -123,7 +125,7 @@ int i,j;
 	ifstream Rvector_270;
 	ifstream Rvector_315;
 
-	FILE *fp_innerp,*fp_V_sqrt,*fp_Cos_similarity,*fp_Angle,*fp_use_Rvector_flag,*fp_use_Rvector_number,*fp_threshold,*fp_threshold_high,*fp_threshold2,*fp_threshold3;
+	FILE *fp_innerp,*fp_V_sqrt,*fp_Cos_similarity,*fp_Angle,*fp_use_Rvector_flag,*fp_use_Rvector_number,*fp_threshold,*fp_threshold_high,*fp_threshold2,*fp_threshold3,*fp_threshold_number_LC;
 
 	void Rvector_read();
 	void Read_output();
@@ -738,6 +740,8 @@ int cossim(char date_directory[],int &image_x,int &image_y,int paramerter[],int 
 
 				fprintf(fp_Cos_similarity, "%lf,", Cos_similarity[j][i]);
 				if (j == image_x - 1) { fprintf(fp_Cos_similarity, "\n"); }
+
+				
 			}
 
 			fprintf(fp_Angle,"%lf,",Angle[j][i]);
@@ -761,6 +765,13 @@ int cossim(char date_directory[],int &image_x,int &image_y,int paramerter[],int 
 		
 		for (i = 0; i < image_y; ++i) {
 			for (j = 0; j < image_x; ++j) {
+				fprintf(fp_threshold_number_LC, "%lf,", threshold_LC_number[j][i]);
+				if (j == image_x - 1) { fprintf(fp_threshold_number_LC, "\n"); }
+			}
+		}
+
+		for (i = 0; i < image_y; ++i) {
+			for (j = 0; j < image_x; ++j) {
 			//	printf("%lf,", threshold_LC_number[j][i]);
 				if (threshold_LC_number[j][i] == 0) {
 					threshold3[j][i] = 0;
@@ -773,7 +784,7 @@ int cossim(char date_directory[],int &image_x,int &image_y,int paramerter[],int 
 			}
 		}
 		
-		free_matrix(threshold_LC_number, 0, image_x - 1, 0, image_y - 1);
+		
 ///////////////////////////書き込み終わり/////////////////////////////////////////////////////////			
 
 	//ファイルを閉じる
@@ -783,6 +794,7 @@ int cossim(char date_directory[],int &image_x,int &image_y,int paramerter[],int 
 				fclose(fp_Cos_similarity);
 				fclose(fp_threshold_high);
 				fclose(fp_threshold);
+				fclose(fp_threshold_number_LC);
 			}
 
 	fclose(fp_Angle);
@@ -818,6 +830,7 @@ int cossim(char date_directory[],int &image_x,int &image_y,int paramerter[],int 
 
 
 	//メモリの開放
+	free_matrix(threshold_LC_number, 0, image_x - 1, 0, image_y - 1);
 	free_matrix(threshold2, 0, image_x - 1, 0, image_y - 1);
 	free_matrix(threshold3, 0, image_x - 1, 0, image_y - 1);
 	free_matrix(threshold_high, 0, image_x - 1, 0, image_y - 1);
@@ -853,8 +866,9 @@ void Read_output(){
 	sprintf(math_name8,"%s\\%s",date_directory3, math_name8_s);
 	sprintf(math_name9,"%s\\%s",date_directory3, math_name9_s);
 	sprintf(math_name10, "%s\\%s", date_directory3, math_name10_s);
+	sprintf(math_name11, "%s\\%s", date_directory3, math_name11_s);
 
-	//確認
+	//ファイルオープン及び確認
 	if (cos_eco_mode_flag != 1) {
 		if ((fp_innerp = fopen(math_name1, "w")) == NULL) { printf("入力エラー innerp.csvが開けません\nFile_name : %s", math_name1); exit(1); }
 		if ((fp_V_sqrt = fopen(math_name2, "w")) == NULL) { printf("入力エラー V_sqrt.csvが開けません\nFile_name : %s", math_name2); exit(1); }
@@ -865,6 +879,7 @@ void Read_output(){
 		if ((fp_use_Rvector_number = fopen(math_name7, "w")) == NULL) { printf("入力エラー use_Rvector_number.csvが開けません\nFile_name : %s", math_name7); exit(1); }
 		
 		if ((fp_threshold = fopen(math_name9, "w")) == NULL) { printf("入力エラー threshold.csvが開けません\nFile_name : %s", math_name9); exit(1); }
+		if ((fp_threshold_number_LC = fopen(math_name11, "w")) == NULL) { printf("入力エラー threshold_number_LC.csvが開けません\nFile_name : %s", math_name11); exit(1); }
 		
 	}
 	if ((fp_Angle = fopen(math_name4, "w")) == NULL) { printf("入力エラー Angle.csvが開けません\nFile_name : %s", math_name4); exit(1); }
@@ -1054,6 +1069,7 @@ void Rvector_read(){
 
 int local_connectivity(int image_x, int image_y, double *local_flag[],double *threshold_LC_number[]) {
 
+	//Nrutilを用いたメモリの確保
 	double **threshold_LC_flag = matrix(0, image_x - 1, 0, image_y - 1);
 	for (i = 0; i < image_y; i++) {
 		for (j = 0; j < image_x; j++) {
@@ -1065,10 +1081,11 @@ int local_connectivity(int image_x, int image_y, double *local_flag[],double *th
 	for (i = 1; i < image_y - 1; i++) {
 		for (j = 1; j < image_x - 1; j++) {
 
+			//直線の太さ方法に繋がることを考える
 			//エッジ方向とに隣接する方向がθ±45°以内に存在しない場合，flagを0→threshold3=0とする
 			//0°の時
 			if (local_flag[j][i] == 1) {
-				if (local_flag[j][i] + 1 < local_flag[j][i - 1] < local_flag[j][i] + 7 && local_flag[j][i] + 1 < local_flag[j][i + 1] < local_flag[j][i] + 7) {
+				if (local_flag[j][i - 1]>local_flag[j][i] + 1 && local_flag[j][i - 1] < local_flag[j][i] + 7 && local_flag[j][i + 1]>local_flag[j][i] + 1 &&  local_flag[j][i + 1]< local_flag[j][i] + 7) {
 					threshold_LC_flag[j][i] = 0;
 				}else {
 					threshold_LC_flag[j][i] = local_flag[j][i];
@@ -1077,45 +1094,131 @@ int local_connectivity(int image_x, int image_y, double *local_flag[],double *th
 
 			//45°,225°の時
 			if (local_flag[j][i] == 2 || local_flag[j][i] == 6) {
-				if (local_flag[j][i] - 1 <= local_flag[j - 1][i - 1] <= local_flag[j][i] + 1 || local_flag[j][i] - 1 <= local_flag[j + 1][i + 1] <= local_flag[j][i] + 1) {
+				if (local_flag[j - 1][i - 1] >= local_flag[j][i] - 1 && local_flag[j - 1][i - 1] <= local_flag[j][i] + 1) {
 					threshold_LC_flag[j][i] = local_flag[j][i];
-				}else {
+				}
+				else if (local_flag[j + 1][i + 1] >= local_flag[j][i] - 1 && local_flag[j + 1][i + 1] <= local_flag[j][i] + 1) {
+					threshold_LC_flag[j][i] = local_flag[j][i];
+				}
+				else {
 					threshold_LC_flag[j][i] = 0;
 				}
 			}
 
 			//90°,270°の時
 			if (local_flag[j][i] == 3 || local_flag[j][i] == 7) {
-				if (local_flag[j][i] - 1 <= local_flag[j - 1][i] <= local_flag[j][i] + 1 || local_flag[j][i] - 1 <= local_flag[j + 1][i] <= local_flag[j][i] + 1) {
+				if (local_flag[j - 1][i] >= local_flag[j][i] - 1 && local_flag[j - 1][i] <= local_flag[j][i] + 1) {
 					threshold_LC_flag[j][i] = local_flag[j][i];
-				}else {
+				}
+				else if (local_flag[j + 1][i] >= local_flag[j][i] - 1 && local_flag[j + 1][i] <= local_flag[j][i] + 1) {
+					threshold_LC_flag[j][i] = local_flag[j][i];
+				}
+				else {
 					threshold_LC_flag[j][i] = 0;
 				}
 			}
 
 			//135°の時
 			if (local_flag[j][i] == 4) {
-				if (local_flag[j][i] - 1 <= local_flag[j + 1][i - 1] <= local_flag[j][i] + 1 || local_flag[j][i] - 1 <= local_flag[j - 1][i + 1] <= local_flag[j][i] + 1) {
+				if (local_flag[j + 1][i - 1] >= local_flag[j][i] - 1 && local_flag[j + 1][i - 1] <= local_flag[j][i] + 1) {
 					threshold_LC_flag[j][i] = local_flag[j][i];
-				}else {
+				}
+				else if (local_flag[j - 1][i + 1] >= local_flag[j][i] - 1 && local_flag[j - 1][i + 1] <= local_flag[j][i] + 1) {
+					threshold_LC_flag[j][i] = local_flag[j][i];
+				}
+				else {
 					threshold_LC_flag[j][i] = 0;
 				}
 			}
-
+			
 			//180°の時
 			if (local_flag[j][i] == 5) {
-				if (local_flag[j][i] - 1 <= local_flag[j][i - 1] <= local_flag[j][i] + 1 || local_flag[j][i] - 1 <= local_flag[j][i + 1] <= local_flag[j][i] + 1) {
+				if (local_flag[j][i - 1] >= local_flag[j][i] - 1 && local_flag[j][i - 1] <= local_flag[j][i] + 1) {
 					threshold_LC_flag[j][i] = local_flag[j][i];
-				}else {
+				}
+				else if (local_flag[j][i + 1] >= local_flag[j][i] - 1 && local_flag[j][i + 1] <= local_flag[j][i] + 1) {
+					threshold_LC_flag[j][i] = local_flag[j][i];
+				}
+				else {
 					threshold_LC_flag[j][i] = 0;
 				}
 			}
-
+			
 			//315°の時
 			if (local_flag[j][i] == 8) {
-				if (local_flag[j][i] - 7 < local_flag[j + 1][i - 1] <= local_flag[j][i] - 1 || local_flag[j][i] - 7 <= local_flag[j - 1][i + 1] <= local_flag[j][i] - 1) {
+				if (local_flag[j + 1][i - 1]>local_flag[j][i] - 7 && local_flag[j + 1][i - 1]  < local_flag[j][i] - 1 && local_flag[j - 1][i + 1]>local_flag[j][i] - 7 && local_flag[j - 1][i + 1]< local_flag[j][i] - 1) {
 					threshold_LC_flag[j][i] = 0;
 				}else {
+					threshold_LC_flag[j][i] = local_flag[j][i];
+				}
+			}
+
+/*
+			//直線の長さ方向に繋がることを考える
+			//エッジ方向とに隣接する方向がθ±45°以内に存在しない場合，flagを0→threshold3=0とする
+			//0°の時
+			if (local_flag[j][i] == 1) {
+				if (local_flag[j - 1][i]>local_flag[j][i] + 1 && local_flag[j - 1][i] < local_flag[j][i] + 7 && local_flag[j + 1][i]>local_flag[j][i] + 1 && local_flag[j + 1][i]< local_flag[j][i] + 7) {
+					threshold_LC_flag[j][i] = 0;
+				}
+				else {
+					threshold_LC_flag[j][i] = local_flag[j][i];
+				}
+			}
+			//45°,225°の時
+			if (local_flag[j][i] == 2 || local_flag[j][i] == 6) {
+				if (local_flag[j + 1][i - 1] >= local_flag[j][i] - 1 && local_flag[j + 1][i - 1] <= local_flag[j][i] + 1) {
+					threshold_LC_flag[j][i] = local_flag[j][i];
+				}
+				else if (local_flag[j - 1][i + 1] >= local_flag[j][i] - 1 && local_flag[j - 1][i + 1] <= local_flag[j][i] + 1) {
+					threshold_LC_flag[j][i] = local_flag[j][i];
+				}
+				else {
+					threshold_LC_flag[j][i] = 0;
+				}
+			}
+			//90°,270°の時
+			if (local_flag[j][i] == 3 || local_flag[j][i] == 7) {
+				if (local_flag[j][i - 1] >= local_flag[j][i] - 1 && local_flag[j][i - 1] <= local_flag[j][i] + 1) {
+					threshold_LC_flag[j][i] = local_flag[j][i];
+				}
+				else if (local_flag[j][i + 1] >= local_flag[j][i] - 1 && local_flag[j][i + 1] <= local_flag[j][i] + 1) {
+					threshold_LC_flag[j][i] = local_flag[j][i];
+				}
+				else {
+					threshold_LC_flag[j][i] = 0;
+				}
+			}
+			//135°の時
+			if (local_flag[j][i] == 4) {
+				if (local_flag[j - 1][i - 1] >= local_flag[j][i] - 1 && local_flag[j - 1][i - 1] <= local_flag[j][i] + 1) {
+					threshold_LC_flag[j][i] = local_flag[j][i];
+				}
+				else if (local_flag[j + 1][i + 1] >= local_flag[j][i] - 1 && local_flag[j + 1][i + 1] <= local_flag[j][i] + 1) {
+					threshold_LC_flag[j][i] = local_flag[j][i];
+				}
+				else {
+					threshold_LC_flag[j][i] = 0;
+				}
+			}
+			//180°の時
+			if (local_flag[j][i] == 5) {
+				if (local_flag[j - 1][i] >= local_flag[j][i] - 1 && local_flag[j - 1][i] <= local_flag[j][i] + 1) {
+					threshold_LC_flag[j][i] = local_flag[j][i];
+				}
+				else if (local_flag[j + 1][i] >= local_flag[j][i] - 1 && local_flag[j + 1][i] <= local_flag[j][i] + 1) {
+					threshold_LC_flag[j][i] = local_flag[j][i];
+				}
+				else {
+					threshold_LC_flag[j][i] = 0;
+				}
+			}
+			//315°の時
+			if (local_flag[j][i] == 8) {
+				if (local_flag[j - 1][i - 1]>local_flag[j][i] - 7 && local_flag[j - 1][i - 1]  < local_flag[j][i] - 1 && local_flag[j + 1][i + 1]>local_flag[j][i] - 7 && local_flag[j + 1][i + 1]< local_flag[j][i] - 1) {
+					threshold_LC_flag[j][i] = 0;
+				}
+				else {
 					threshold_LC_flag[j][i] = local_flag[j][i];
 				}
 			}
@@ -1128,7 +1231,7 @@ int local_connectivity(int image_x, int image_y, double *local_flag[],double *th
 					threshold_LC_number[j][i] = threshold_LC_flag[j][i] + 6;		//0,45のとき
 				}
 			}
-
+*/
 		}
 	}
 
